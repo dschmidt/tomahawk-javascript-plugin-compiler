@@ -64,7 +64,7 @@ module.exports = {
             exclude: [new RegExp(/metadata/)],
             getDestinationPath: function(relativePath) {
                 var split = relativePath.split('/');
-                var newPath = 'icons/resolvers/' + split[split.length-1];
+                var newPath = '/assets/icons/resolvers/' + split[split.length-1];
 
 //                 console.log('relativePath:', newPath);
 
