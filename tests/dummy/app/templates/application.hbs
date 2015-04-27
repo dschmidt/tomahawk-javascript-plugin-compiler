@@ -1,3 +1,30 @@
 <h2 id="title">Welcome to Ember.js</h2>
 
+Imported Resolver: {{ model.settings.name }}
+
+<br><br>
+
+Code for this route:
+<pre>
+<code>
+import Ember from 'ember';
+import Resolver from 'dummy/tomahawk-javascript-plugin-compiler/resolvers/youtube';
+
+export default Ember.Route.extend({
+    model: function () {
+        console.log(Resolver);
+        return Resolver;
+    }
+});
+</code>
+</pre>
+
+Code for this template:
+<pre>
+<code>
+<h2 id="title">Welcome to Ember.js</h2>
+
+Imported Resolver: \{{ model.settings.name }}
+</code>
+</pre>
 {{outlet}}

@@ -1,6 +1,8 @@
 # Tomahawk-javascript-plugin-compiler
 
-This README outlines the details of collaborating on this Ember addon.
+ember-cli addon that takes a specified list of tomahawk javascript plugins (currently just resolvers) and makes them available as es6 modules
+
+You can define a list of filters as includeResolvers in your config which will be passed to funnel.
 
 ## Installation
 
