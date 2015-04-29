@@ -150,7 +150,7 @@ export var TomahawkUrlType = {
     Artist: 8
 };
 
-var TomahawkConfigTestResultType = {
+export var TomahawkConfigTestResultType = {
     Other: 0,
     Success: 1,
     Logout: 2,
