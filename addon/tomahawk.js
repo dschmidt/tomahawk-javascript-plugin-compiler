@@ -134,7 +134,7 @@ Tomahawk.extend = function (object, members) {
 };
 
 
-export var TomahawkResolverCapability = {
+export var TomahawkResolverCapability = { // jshint ignore:line
     NullCapability: 0,
     Browsable:      1,
     PlaylistSync:   2,
@@ -142,15 +142,15 @@ export var TomahawkResolverCapability = {
     UrlLookup:      8
 };
 
-export var TomahawkUrlType = {
-    Any: 0,
+export var TomahawkUrlType = { // jshint ignore:line
     Playlist: 1,
     Track: 2,
     Album: 4,
     Artist: 8
 };
 
-export var TomahawkConfigTestResultType = {
+
+export var TomahawkConfigTestResultType = { // jshint ignore:line
     Other: 0,
     Success: 1,
     Logout: 2,
@@ -164,7 +164,7 @@ export var TomahawkConfigTestResultType = {
 /**
  * Resolver BaseObject, inherit it to implement your own resolver.
  */
-export var TomahawkResolver = {
+export var TomahawkResolver = { // jshint ignore:line
     init: function() {
     },
     scriptPath: function () {
@@ -482,8 +482,7 @@ Tomahawk.asyncRequest = function (url, callback, extraHeaders, options) {
  * @returns boolean indicating whether or not to do a request with the given parameters natively
  */
 var shouldDoNativeRequest = function (url, callback, extraHeaders, options) {
-    return (extraHeaders && (extraHeaders.hasOwnProperty("Referer")
-        || extraHeaders.hasOwnProperty("referer")));
+    return (extraHeaders && (extraHeaders.hasOwnProperty("Referer") || extraHeaders.hasOwnProperty("referer")));
 };
 
 Tomahawk.ajax = function(url, settings) {
@@ -1090,4 +1089,4 @@ Tomahawk.addArtistResults = Tomahawk.addAlbumResults = Tomahawk.addAlbumTrackRes
 };
 
 
-export default Tomahawk;
+export default Tomahawk; // jshint ignore:line
