@@ -64,8 +64,8 @@ Tomahawk.versionCompare = function (version1, version2) {
     var i = 0;
 
     for (; i < length; i++) {
-        if (typeof v1[i] == "undefined" || v1[i] === null) {
-            if (typeof v2[i] == "undefined" || v2[i] === null) {
+        if (typeof v1[i] === "undefined" || v1[i] === null) {
+            if (typeof v2[i] === "undefined" || v2[i] === null) {
                 // v1 == v2
                 return 0;
             } else if (v2[i] === 0) {
@@ -74,7 +74,7 @@ Tomahawk.versionCompare = function (version1, version2) {
                 // v1 < v2
                 return -1;
             }
-        } else if (typeof v2[i] == "undefined" || v2[i] === null) {
+        } else if (typeof v2[i] === "undefined" || v2[i] === null) {
             if ( v1[i] === 0 ) {
                 continue;
             } else {
@@ -210,7 +210,7 @@ export var TomahawkResolver = { // jshint ignore:line
         return {};
     },
     _testConfig: function (config) {
-        return Promise.resolve(this.testConfig(config)).then(function() {
+        return window.Promise.resolve(this.testConfig(config)).then(function() {
             return { result: Tomahawk.ConfigTestResultType.Success };
         });
     },
@@ -223,7 +223,7 @@ export var TomahawkResolver = { // jshint ignore:line
 Tomahawk.Resolver = {};
 Tomahawk.Resolver.Promise = Tomahawk.extend(TomahawkResolver, {
     _adapter_resolve: function (qid, artist, album, title) {
-        Promise.resolve(this.resolve(artist, album, title)).then(function(results){
+        window.Promise.resolve(this.resolve(artist, album, title)).then(function(results){
             Tomahawk.addTrackResults({
                 'qid': qid,
                 'results': results
@@ -233,7 +233,7 @@ Tomahawk.Resolver.Promise = Tomahawk.extend(TomahawkResolver, {
 
     _adapter_search: function (qid, query)
     {
-        Promise.resolve(this.search(query)).then(function(results){
+        window.Promise.resolve(this.search(query)).then(function(results){
             Tomahawk.addTrackResults({
                 'qid': qid,
                 'results': results
@@ -320,7 +320,7 @@ Tomahawk.syncRequest = function (url, extraHeaders, options) {
         }
     }
     xmlHttpRequest.send(null);
-    if (xmlHttpRequest.status == 200) {
+    if (xmlHttpRequest.status === 200) {
         return xmlHttpRequest.responseText;
     } else {
         Tomahawk.log("Failed to do GET request: to: " + url);
@@ -409,12 +409,12 @@ Tomahawk.nativeAsyncRequestDone = function (reqId, xhr) {
     }
 
     // Call the real callback
-    if (xhr.readyState == 4 && xhr.status == 200) {
+    if (xhr.readyState === 4 && xhr.status === 200) {
         // Call the real callback
         if (Tomahawk.asyncRequestCallbacks[reqId].callback) {
             Tomahawk.asyncRequestCallbacks[reqId].callback(xhr);
         }
-    } else if (xmlHttpRequest.readyState === 4) {
+    } else if (xhr.readyState === 4) {
         Tomahawk.log("Failed to do nativeAsyncRequest");
         Tomahawk.log("Status Code was: " + xhr.status);
         if (Tomahawk.asyncRequestCallbacks[reqId].errorHandler) {
@@ -460,7 +460,7 @@ Tomahawk.asyncRequest = function (url, callback, extraHeaders, options) {
             }
         }
         xmlHttpRequest.onreadystatechange = function () {
-            if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+            if (xmlHttpRequest.readyState === 4 && xmlHttpRequest.status === 200) {
                 callback.call(window, xmlHttpRequest);
             } else if (xmlHttpRequest.readyState === 4) {
                 Tomahawk.log("Failed to do " + method + " request: to: " + url);
@@ -520,7 +520,7 @@ Tomahawk.ajax = function(url, settings) {
         }
     }
 
-    return new Promise(function (resolve, reject) {
+    return new window.Promise(function (resolve, reject) {
         settings.errorHandler = reject;
         Tomahawk.asyncRequest(settings.url, resolve, settings.headers, settings);
     }).then(function(xhr) {
@@ -569,14 +569,14 @@ Tomahawk.assert = function (assertion, message) {
 };
 
 Tomahawk.sha256 = Tomahawk.sha256 || function(message) {
-  return CryptoJS.SHA256(message).toString(CryptoJS.enc.Hex);
+  return window.CryptoJS.SHA256(message).toString(window.CryptoJS.enc.Hex);
 };
 Tomahawk.md5 = Tomahawk.md5 || function(message) {
-  return CryptoJS.MD5(message).toString(CryptoJS.enc.Hex);
+  return window.CryptoJS.MD5(message).toString(window.CryptoJS.enc.Hex);
 };
 // Return a HMAC (md5) signature of the input text with the desired key
 Tomahawk.hmac = function (key, message) {
-    return CryptoJS.HmacMD5(message, key).toString(CryptoJS.enc.Hex);
+    return window.CryptoJS.HmacMD5(message, key).toString(window.CryptoJS.enc.Hex);
 };
 
 // Extracted from https://github.com/andrewrk/diacritics version 1.2.0
@@ -757,18 +757,18 @@ Tomahawk.PluginManager = {
 
         if (typeof this.objects[objectId][methodName] === 'function') {
             if (!Tomahawk.resolver.instance.apiVersion || Tomahawk.resolver.instance.apiVersion < 0.9) {
-                if (methodName == 'artists') {
-                    return new Promise(function (resolve, reject) {
+                if (methodName === 'artists') {
+                    return new window.Promise(function (resolve, reject) {
                         pluginManager.resolve[requestId] = resolve;
                         Tomahawk.resolver.instance.artists(requestId);
                     });
-                } else if (methodName == 'albums') {
-                    return new Promise(function (resolve, reject) {
+                } else if (methodName === 'albums') {
+                    return new window.Promise(function (resolve, reject) {
                         pluginManager.resolve[requestId] = resolve;
                         Tomahawk.resolver.instance.albums(requestId, params.artist);
                     });
-                } else if (methodName == 'tracks') {
-                    return new Promise(function (resolve, reject) {
+                } else if (methodName === 'tracks') {
+                    return new window.Promise(function (resolve, reject) {
                         pluginManager.resolve[requestId] = resolve;
                         Tomahawk.resolver.instance.tracks(requestId, params.artist, params.album);
                     });
@@ -782,7 +782,7 @@ Tomahawk.PluginManager = {
     },
 
     invoke: function (requestId, objectId, methodName, params ) {
-        Promise.resolve(this.invokeSync(requestId, objectId, methodName, params)).then(function (result) {
+        window.Promise.resolve(this.invokeSync(requestId, objectId, methodName, params)).then(function (result) {
             if (typeof result === 'object') {
                 Tomahawk.reportScriptJobResults({
                     requestId: requestId,
