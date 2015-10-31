@@ -8,38 +8,49 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 var funnel = require('broccoli-funnel');
 
-var Processor = CachingWriter.extend({
-    updateCache: function(srcPaths, destDir) {
-//         console.log('updateCache:', srcPaths[0], destDir);
-        var paths = walkSync(srcPaths[0]);
 
-        var first = true;
-        for (var i = 0, l = paths.length; i < l; i++) {
-            var filepath = paths[i];
+Processor.prototype = Object.create(CachingWriter.prototype);
+Processor.prototype.constructor = Processor;
+function Processor(inputNodes, options){
+    options = options || {};
 
-            // Check that it's not a directory
-            if (filepath[filepath.length-1] !== '/' && !filepath.match(new RegExp(/metadata/))) {
-                var fileContents = fs.readFileSync(path.join(srcPaths[0], filepath)).toString();
+    CachingWriter.call(this, inputNodes, {
+        annotation: options.annotation
+    });
+}
 
-                var match = fileContents.match(/Tomahawk\.resolver\.instance\s*=\s*(.*)\s*;/);
-                if(match && match[1]) {
 
-                    var importString = "";
-                    importString += 'import Tomahawk from \'' + this.tomahawkGlobal + '\';';
-                    importString += 'import { TomahawkResolver, TomahawkResolverCapability } from \'' + this.tomahawkGlobal + '\';';
+Processor.prototype.build = function() {
+//     console.log('updateCache:', this.inputPaths[0], this.outputPath);
+    var paths = walkSync(this.inputPaths[0]);
 
-                    fileContents = importString + fileContents.replace(match[0], 'export default ' + match[1]);
+    var first = true;
+    for (var i = 0, l = paths.length; i < l; i++) {
+        var filepath = paths[i];
 
-                    var split = filepath.split('/');
-                    var filename = split[split.length-1];
-                    var destPath = path.join(destDir, 'tomahawk-javascript-plugin-compiler', 'resolvers', filename);
-                    mkdirp.sync(path.dirname(destPath));
-                    fs.writeFileSync(destPath, fileContents);
-                }
+        // Check that it's not a directory
+        if (filepath[filepath.length-1] !== '/' && !filepath.match(new RegExp(/metadata/))) {
+            var fileContents = fs.readFileSync(path.join(this.inputPaths[0], filepath)).toString();
+
+            var match = fileContents.match(/Tomahawk\.resolver\.instance\s*=\s*(.*)\s*;/);
+            if(match && match[1]) {
+
+                var importString = "";
+                importString += 'import Tomahawk from \'' + this.tomahawkGlobal + '\';';
+                importString += 'import { TomahawkResolver, TomahawkResolverCapability } from \'' + this.tomahawkGlobal + '\';';
+
+                fileContents = importString + fileContents.replace(match[0], 'export default ' + match[1]);
+
+                var split = filepath.split('/');
+                var filename = split[split.length-1];
+                var destPath = path.join(this.outputPath, 'tomahawk-javascript-plugin-compiler', 'resolvers', filename);
+                mkdirp.sync(path.dirname(destPath));
+                fs.writeFileSync(destPath, fileContents);
             }
         }
     }
-});
+}
+
 
 
 
@@ -49,9 +60,9 @@ module.exports = {
     treeForApp: function (app) {
         if(!this.app) return;
 
-        var processor = new Processor(funnel(this.resolverTree, {
+        var processor = new Processor([funnel(this.resolverTree, {
             include: this.includeResolverRegExps
-        }));
+        })]);
 
         processor.tomahawkGlobal = this.tomahawkGlobal;
 
