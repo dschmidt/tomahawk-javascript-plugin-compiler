@@ -230,8 +230,8 @@ export var TomahawkResolver = {
     search: function (params) {
         return this.resolve({track: params.query});
     },
-    getStreamUrl: function (qid, url) {
-        Tomahawk.reportStreamUrl(qid, url);
+    getStreamUrl: function (params) {
+        return params;
     }
 };
 
