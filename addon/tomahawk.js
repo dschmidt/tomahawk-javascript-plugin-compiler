@@ -146,7 +146,7 @@ Tomahawk.extend = function (object, members) {
 };
 
 //Deprecated for 0.9 resolvers. Reporting resolver capabilities is no longer necessary.
-var TomahawkResolverCapability = {
+export var TomahawkResolverCapability = {
     NullCapability: 0,
     Browsable:      1,
     PlaylistSync:   2,
@@ -155,7 +155,7 @@ var TomahawkResolverCapability = {
 };
 
 //Deprecated for 0.9 resolvers. Use Tomahawk.UrlType instead.
-var TomahawkUrlType = {
+export var TomahawkUrlType = {
     Any: 0,
     Playlist: 1,
     Track: 2,
@@ -165,7 +165,7 @@ var TomahawkUrlType = {
 };
 
 //Deprecated for 0.9 resolvers. Use Tomahawk.ConfigTestResultType instead.
-var TomahawkConfigTestResultType = {
+export var TomahawkConfigTestResultType = {
     Other: 0,
     Success: 1,
     Logout: 2,
@@ -180,64 +180,9 @@ var TomahawkConfigTestResultType = {
  * Resolver BaseObject, inherit it to implement your own resolver.
  */
 var TomahawkResolver = {
-    init: function () {
-    },
-    scriptPath: function () {
-        return Tomahawk.resolverData().scriptPath;
-    },
-    getConfigUi: function () {
-        return {};
-    },
-    getUserConfig: function () {
-        return JSON.parse(window.localStorage[this.scriptPath()] || "{}");
-    },
-    saveUserConfig: function () {
-        var configJson = JSON.stringify(Tomahawk.resolverData().config);
-        window.localStorage[this.scriptPath()] = configJson;
-        this.newConfigSaved();
-    },
-    newConfigSaved: function () {
-    },
-    resolve: function (qid, artist, album, title) {
-        return {
-            qid: qid
-        };
-    },
-    search: function (qid, searchString) {
-        return this.resolve(qid, "", "", searchString);
-    },
-    artists: function (qid) {
-        return {
-            qid: qid
-        };
-    },
-    albums: function (qid, artist) {
-        return {
-            qid: qid
-        };
-    },
-    tracks: function (qid, artist, album) {
-        return {
-            qid: qid
-        };
-    },
-    collection: function () {
-        return {};
-    },
-    _testConfig: function (config) {
-        return RSVP.Promise.resolve(this.testConfig(config)).then(function () {
-            return {result: Tomahawk.ConfigTestResultType.Success};
-        });
-    },
-    testConfig: function () {
-        this.configTest();
-    },
-    getStreamUrl: function (qid, url) {
-        Tomahawk.reportStreamUrl(qid, url);
-    }
 };
 
-Tomahawk.Resolver = {
+export var TomahawkResolver = {
     init: function () {
     },
     scriptPath: function () {
@@ -278,8 +223,19 @@ Tomahawk.Resolver = {
         return RSVP.Promise.resolve(this.testConfig(config)).then(function () {
             return {result: Tomahawk.ConfigTestResultType.Success};
         });
+    },
+        resolve: function (params) {
+        return [];
+    },
+    search: function (params) {
+        return this.resolve({track: params.query});
+    },
+    getStreamUrl: function (qid, url) {
+        Tomahawk.reportStreamUrl(qid, url);
     }
 };
+
+Tomahawk.Resolver = TomahawkResolver;
 
 
 // help functions
